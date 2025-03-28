@@ -95,9 +95,10 @@ class OrderItemControllerTest {
 
     @Test
     void testDeleteOrderItem() {
+        when(orderItemService.getOrderItem(1L)).thenReturn(Optional.of(mockOrderItem));
         when(orderItemService.deleteOrderItem(1L)).thenReturn(Optional.of(mockOrderItem));
 
-        ResponseEntity<OrderItem> response = orderItemController.deleteOrderItem(1L);
+        ResponseEntity<Void> response = orderItemController.deleteOrderItem(1L);
 
         assertEquals(NO_CONTENT, response.getStatusCode());
         verify(orderItemService, times(1)).deleteOrderItem(1L);

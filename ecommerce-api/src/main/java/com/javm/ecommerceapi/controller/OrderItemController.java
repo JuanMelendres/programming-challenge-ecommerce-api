@@ -187,10 +187,18 @@ public class OrderItemController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<OrderItem> deleteOrderItem(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteOrderItem(@PathVariable("id") Long id) {
         try {
-            Optional<OrderItem> deletedOrderItem = orderItemService.deleteOrderItem(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            Optional<OrderItem> deletedOrderItem = orderItemService.getOrderItem(id);
+
+            if (deletedOrderItem.isEmpty()) {
+                log.warn("Order Item with ID {} not found", id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            orderItemService.deleteOrderItem(id);
+            log.info("Order Item with ID {} deleted successfully", id);
+            return ResponseEntity.noContent().build();
         }
         catch (Exception e) {
             log.error("Error deleting order item with ID {}: {}", id, e.getMessage());

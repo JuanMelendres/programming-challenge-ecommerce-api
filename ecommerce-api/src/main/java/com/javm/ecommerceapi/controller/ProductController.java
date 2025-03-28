@@ -179,6 +179,12 @@ public class ProductController {
                                     @Content(schema = @Schema())
                             }),
                     @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = {
+                                    @Content(schema = @Schema())
+                            }),
+                    @ApiResponse(
                             responseCode = "500",
                             description = "Internal Server Error",
                             content = {
@@ -187,10 +193,19 @@ public class ProductController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Product> deleteProduct(@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") long id) {
         try {
-            Optional<Product> updatedProduct = productService.deleteProduct(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            Optional<Product> deletedProduct = productService.getProduct(id);
+
+            if (deletedProduct.isEmpty()) {
+                log.warn("Product with ID {} not found", id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            productService.deleteProduct(id);
+            log.info("Product with ID {} deleted successfully", id);
+            return ResponseEntity.noContent().build();
+
         } catch (Exception e) {
             log.error("Error deleting product with ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -179,6 +179,12 @@ public class OrderController {
                                     @Content(schema = @Schema())
                             }),
                     @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = {
+                                    @Content(schema = @Schema())
+                            }),
+                    @ApiResponse(
                             responseCode = "500",
                             description = "Internal Server Error",
                             content = {
@@ -187,10 +193,18 @@ public class OrderController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Order> deleteOrder(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteOrder(@PathVariable("id") Long id) {
         try {
-            Optional<Order> deletedOrder = orderService.deleteOrder(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            Optional<Order> deletedOrder = orderService.getOrder(id);
+
+            if (deletedOrder.isEmpty()) {
+                log.warn("Order with ID {} not found", id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            orderService.deleteOrder(id);
+            log.info("Order with ID {} deleted successfully", id);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Error deleting order with ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -26,14 +26,25 @@ class ProductControllerTest {
     @InjectMocks
     private ProductController productController;
 
+    private Product mockProduct1;
+    private Product mockProduct2;
+
     @BeforeEach
     void setUp() {
-        // Initialize mocks if necessary
+        mockProduct1 = new Product();
+        mockProduct1.setId(1L);
+        mockProduct1.setName("Product 1");
+        mockProduct1.setDescription("Product 1");
+
+        mockProduct2 = new Product();
+        mockProduct2.setId(2L);
+        mockProduct2.setName("Product 2");
+        mockProduct2.setDescription("Product 2");
     }
 
     @Test
     void testGetProducts() {
-        List<Product> mockProducts = List.of(new Product(), new Product());
+        List<Product> mockProducts = List.of(mockProduct1, mockProduct2);
         when(productService.getProducts()).thenReturn(mockProducts);
 
         ResponseEntity<List<Product>> response = productController.getProducts();
@@ -45,49 +56,47 @@ class ProductControllerTest {
 
     @Test
     void testGetProduct() {
-        Product mockProduct = new Product();
-        when(productService.getProduct(1L)).thenReturn(Optional.of(mockProduct));
+        when(productService.getProduct(1L)).thenReturn(Optional.of(mockProduct1));
 
         ResponseEntity<Product> response = productController.getProduct(1L);
 
         assertEquals(OK, response.getStatusCode());
-        assertEquals(mockProduct, response.getBody());
+        assertEquals(mockProduct1, response.getBody());
         verify(productService, times(1)).getProduct(1L);
     }
 
     @Test
     void testCreateProduct() {
-        Product mockProduct = new Product();
-        when(productService.createProduct(mockProduct)).thenReturn(mockProduct);
+        when(productService.createProduct(mockProduct1)).thenReturn(mockProduct1);
 
-        ResponseEntity<Product> response = productController.createProduct(mockProduct);
+        ResponseEntity<Product> response = productController.createProduct(mockProduct1);
 
         assertEquals(CREATED, response.getStatusCode());
-        assertEquals(mockProduct, response.getBody());
-        verify(productService, times(1)).createProduct(mockProduct);
+        assertEquals(mockProduct1, response.getBody());
+        verify(productService, times(1)).createProduct(mockProduct1);
     }
 
     @Test
     void testUpdateProduct() {
-        Product mockProduct = new Product();
-        when(productService.updateProduct(1L, mockProduct)).thenReturn(Optional.of(mockProduct));
+        when(productService.updateProduct(1L, mockProduct1)).thenReturn(Optional.of(mockProduct1));
 
-        ResponseEntity<Product> response = productController.updateProduct(1L, mockProduct);
+        ResponseEntity<Product> response = productController.updateProduct(1L, mockProduct1);
 
         assertEquals(OK, response.getStatusCode());
-        assertEquals(mockProduct, response.getBody());
-        verify(productService, times(1)).updateProduct(1L, mockProduct);
+        assertEquals(mockProduct1, response.getBody());
+        verify(productService, times(1)).updateProduct(1L, mockProduct1);
     }
 
     @Test
     void testDeleteProduct() {
-        Product mockProduct = new Product();
-        when(productService.deleteProduct(1L)).thenReturn(Optional.of(mockProduct));
+        when(productService.getProduct(1L)).thenReturn(Optional.of(mockProduct1));
+        when(productService.deleteProduct(1L)).thenReturn(Optional.of(mockProduct1));
 
-        ResponseEntity<Product> response = productController.deleteProduct(1L);
+        ResponseEntity<Void> response = productController.deleteProduct(1L);
 
         assertEquals(NO_CONTENT, response.getStatusCode());
         verify(productService, times(1)).deleteProduct(1L);
     }
+
 }
 
