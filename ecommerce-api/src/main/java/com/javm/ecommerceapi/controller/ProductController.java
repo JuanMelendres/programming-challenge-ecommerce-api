@@ -173,8 +173,8 @@ public class ProductController {
     @ApiResponses(
             value = {
                     @ApiResponse(
-                            responseCode = "404",
-                            description = "Not Found",
+                            responseCode = "204",
+                            description = "No Content",
                             content = {
                                     @Content(schema = @Schema())
                             }),
@@ -190,7 +190,7 @@ public class ProductController {
     public ResponseEntity<Product> deleteProduct(@PathVariable("id") long id) {
         try {
             Optional<Product> updatedProduct = productService.deleteProduct(id);
-            return ResponseEntity.of(updatedProduct);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
             log.error("Error deleting product with ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

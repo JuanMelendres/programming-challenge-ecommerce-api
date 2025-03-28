@@ -15,8 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductControllerTest {
@@ -87,8 +86,7 @@ class ProductControllerTest {
 
         ResponseEntity<Product> response = productController.deleteProduct(1L);
 
-        assertEquals(OK, response.getStatusCode());
-        assertEquals(mockProduct, response.getBody());
+        assertEquals(NO_CONTENT, response.getStatusCode());
         verify(productService, times(1)).deleteProduct(1L);
     }
 }

@@ -173,8 +173,8 @@ public class OrderController {
     @ApiResponses(
             value = {
                     @ApiResponse(
-                            responseCode = "404",
-                            description = "Not Found",
+                            responseCode = "204",
+                            description = "No Content",
                             content = {
                                     @Content(schema = @Schema())
                             }),
@@ -190,7 +190,7 @@ public class OrderController {
     public ResponseEntity<Order> deleteOrder(@PathVariable("id") Long id) {
         try {
             Optional<Order> deletedOrder = orderService.deleteOrder(id);
-            return ResponseEntity.of(deletedOrder);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
             log.error("Error deleting order with ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
